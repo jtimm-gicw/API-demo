@@ -1,0 +1,159 @@
+/* =========================
+   PAGE STYLING
+========================= */
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, Helvetica, sans-serif;
+
+  /* Sky gradient */
+  background: linear-gradient(to bottom, #4facfe, #c2e9fb);
+
+  min-height: 100vh;
+}
+
+
+/* =========================
+   MAIN CONTAINER
+========================= */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  padding-top: 50px;
+
+  color: white;
+}
+
+
+/* =========================
+   TITLE
+========================= */
+
+.title {
+  font-size: 3rem;
+  margin-bottom: 30px;
+
+  text-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+}
+
+
+/* =========================
+   SEARCH SECTION
+========================= */
+
+.search-box {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 30px;
+}
+
+
+/* =========================
+   INPUT
+========================= */
+
+.input {
+  padding: 12px;
+  width: 220px;
+
+  border: none;
+  border-radius: 10px;
+
+  font-size: 1rem;
+
+  outline: none;
+}
+
+
+/* =========================
+   BUTTON
+========================= */
+
+.button {
+  padding: 12px 18px;
+
+  border: none;
+  border-radius: 10px;
+
+  background-color: #0077ff;
+  color: white;
+
+  font-size: 1rem;
+  font-weight: bold;
+
+  cursor: pointer;
+
+  transition: 0.3s;
+}
+
+
+/* Hover effect */
+.button:hover {
+  background-color: #005fd1;
+  transform: scale(1.05);
+}
+
+
+/* =========================
+   WEATHER CARD
+========================= */
+
+.card {
+  background: rgba(255, 255, 255, 0.2);
+
+  backdrop-filter: blur(8px);
+
+  padding: 25px;
+  border-radius: 20px;
+
+  width: 320px;
+
+  text-align: center;
+
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+
+
+/* =========================
+   WEATHER TEXT
+========================= */
+
+.card h2 {
+  margin-bottom: 15px;
+}
+
+.card p {
+  font-size: 1.1rem;
+  margin: 10px 0;
+}
+
+
+/* =========================
+   ERROR MESSAGE
+========================= */
+
+.error {
+  color: #ffdddd;
+
+  background-color: rgba(255, 0, 0, 0.3);
+
+  padding: 10px 20px;
+
+  border-radius: 10px;
+
+  margin-bottom: 20px;
+}
+
+
+/* =========================
+   LOADING MESSAGE
+========================= */
+
+.loading {
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+}
