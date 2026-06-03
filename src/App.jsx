@@ -1,6 +1,7 @@
 // useState lets React store data
 import { useState } from "react";
-import './App.css';
+import "./App.css";
+
 // =========================
 // MAIN COMPONENT
 // =========================
@@ -13,22 +14,37 @@ function App() {
 
   // Stores the city the user types
   const [city, setCity] = useState("");
+
   // Stores weather data from the API
   const [weather, setWeather] = useState(null);
+
   // Tracks loading state
   const [loading, setLoading] = useState(false);
+
   // Stores error messages
   const [error, setError] = useState("");
 
   // =========================
-  // API KEY
+  // BACKEND SERVER URL
   // =========================
 
-  // Access environment variable from .env file
-  const apiKey = import.meta.env.VITE_WEATHER_API_KEY;
-                  // Do NOT hardcode API keys in your code! This is a security risk. Instead, we store it in a .env file and access it as an environment variable. 
-                  // import.meta.env --> Access Vite environment variable 
-                  // VITE_WEATHER_API_KEY --> The specific variable we want ---> mathces .env variable name
+  // NEW:
+  //
+  // In our first version of this app,
+  // React talked directly to OpenWeather.
+  //
+  // Now React talks to OUR backend server.
+  //
+  // The backend:
+  // 1. Calls OpenWeather
+  // 2. Calls Unsplash
+  // 3. Combines the data
+  // 4. Sends one response back
+  //
+  // This is much closer to how
+  // professional applications work.
+
+  const serverUrl = "http://localhost:3001";
 
   // =========================
   // GET WEATHER FUNCTION
@@ -38,50 +54,64 @@ function App() {
   // "this function takes time to finish"
   // It can wait for API data
   // It allows use of await
+
   const getWeather = async () => {
+
     // Prevent empty searches
     if (city === "") {
       setError("Please enter a city.");
       return;
     }
+
     // Start loading
     setLoading(true);
+
     // Clear previous errors
     setError("");
 
     try {
 
       // =========================
-      // API URL
+      // BACKEND API URL
       // =========================
 
-      // Build the URL using:
-      // - city from state
-      // - API key
-      // - units=imperial for Fahrenheit
+      // NEW:
+      //
+      // Instead of calling OpenWeather directly,
+      // we call our own backend server.
+      //
+      // The backend handles all communication
+      // with external APIs.
 
       const url =
-        `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=imperial`;
-        // Developers Developers usually do NOT invent API URLs themselves. They read the API documentation.
+        `${serverUrl}/weather?city=${city}`;
 
       // =========================
       // FETCH REQUEST
       // =========================
 
       // fetch() sends request to API
-      const response = await fetch(url); // Don't foreget await or fetch() will return a pending promise instead of the actual response. We use Axios for larger projects, but fetch is built into the browser and works fine for simple requests like this.
+      const response = await fetch(url);
 
       // Convert response into JSON
-      const data = await response.json(); // don't have to convert to json with Axios, but fetch returns a response object that we need to convert to JSON to access the data.
+      const data = await response.json();
 
       // =========================
       // ERROR HANDLING
       // =========================
 
-      // OpenWeather returns cod values for errors
-      if (data.cod !== 200) {
-        setError(data.message);
-        // Stop function early
+      // NEW:
+      //
+      // Our backend sends a custom error object.
+      //
+      // Example:
+      //
+      // {
+      //   error: "Unable to retrieve weather data."
+      // }
+
+      if (data.error) {
+        setError(data.error);
         return;
       }
 
@@ -89,44 +119,98 @@ function App() {
       // SAVE DATA TO STATE
       // =========================
 
-      // Store API data
+      // NEW:
+      //
+      // The backend now combines:
+      //
+      // Weather Data
+      // +
+      // Image Data
+      //
+      // Example:
+      //
+      // {
+      //   city: "Seattle",
+      //   temperature: 72,
+      //   humidity: 60,
+      //   description: "broken clouds",
+      //   image: "https://..."
+      // }
+
       setWeather(data);
+
     } catch {
+
       // Runs if request completely fails
       setError("Something went wrong.");
+
     } finally {
+
       // Stop loading no matter what
       setLoading(false);
+
     }
   };
-
 
   // =========================
   // return JSX to render UI
   // =========================
 
   return (
+
     <div style={styles.container}>
+
       {/* =========================
           TITLE
       ========================== */}
-      <h1>React Weather API Demo</h1>
+
+      {/*
+
+      NEW:
+
+      This demo now shows how one backend
+      can combine multiple APIs into a
+      single response.
+
+      React
+        ↓
+      Backend
+        ↓
+      Weather API
+
+      Backend
+        ↓
+      Image API
+
+      Backend
+        ↓
+      One Combined Response
+
+      */}
+
+      <h1>Weather + Image API Demo</h1>
+
       {/* =========================
           INPUT
       ========================== */}
+
       <input
         type="text"
         placeholder="Enter city"
+
         // Controlled input value
         value={city}
+
         // Update state when typing
         onChange={(event) => setCity(event.target.value)}
+
         style={styles.input}
       />
 
       {/* =========================
           BUTTON
       ========================== */}
+
       <button
         onClick={getWeather}
         style={styles.button}
@@ -137,49 +221,87 @@ function App() {
       {/* =========================
           LOADING MESSAGE
       ========================== */}
+
       {loading && <h2>Loading...</h2>}
-      {/* It means --> “Only show this <p> element IF weather contains data.” */}
+
+      {/* It means --> “Only show this element IF loading is true.” */}
 
       {/* =========================
           ERROR MESSAGE
       ========================== */}
+
       {error && <h2>{error}</h2>}
 
       {/* =========================
           WEATHER DATA
       ========================== */}
+
       {weather && (
 
         <div style={styles.card}>
 
           {/* City Name */}
-          <h2>{weather.name}</h2>
 
+          <h2>{weather.city}</h2>
 
           {/* Temperature */}
-          <p>
-            Temperature: {weather.main.temp}°F
-          </p>
 
+          <p>
+            Temperature: {weather.temperature}°F
+          </p>
 
           {/* Weather Condition */}
-          <p>
-            Condition: {weather.weather[0].description}
-          </p>
 
+          <p>
+            Condition: {weather.description}
+          </p>
 
           {/* Humidity */}
+
           <p>
-            Humidity: {weather.main.humidity}%
+            Humidity: {weather.humidity}%
           </p>
 
+          {/* =========================
+              WEATHER IMAGE
+          ========================== */}
+
+          {/*
+
+          NEW:
+
+          The backend uses the weather
+          condition to search Unsplash.
+
+          Examples:
+
+          Clouds → Cloud photo
+
+          Rain → Rainy photo
+
+          Snow → Snowy photo
+
+          Sunny → Sunshine photo
+
+          */}
+
+          {weather.image && (
+
+            <img
+              src={weather.image}
+              alt={weather.description}
+              style={styles.image}
+            />
+
+          )}
+
         </div>
+
       )}
 
     </div>
   );
 }
-
 
 // =========================
 // SIMPLE STYLES
@@ -209,8 +331,14 @@ const styles = {
     border: "1px solid gray",
     padding: "20px",
     borderRadius: "10px",
-    maxWidth: "300px",
+    maxWidth: "400px",
     marginInline: "auto",
+  },
+
+  image: {
+    width: "100%",
+    marginTop: "15px",
+    borderRadius: "10px",
   },
 };
 
