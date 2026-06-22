@@ -1,12 +1,16 @@
+/* eslint-disable no-unused-vars */
 // useState lets React store data
 import { useState } from "react";
 import "./App.css";
+
 
 // =========================
 // MAIN COMPONENT
 // =========================
 
 function App() {
+const serverUrl = import.meta.env.VITE_SERVER_URL;
+console.log("SERVER URL:", import.meta.env.VITE_SERVER_URL);
 
   // =========================
   // STATE VARIABLES
@@ -38,13 +42,12 @@ function App() {
   // The backend:
   // 1. Calls OpenWeather
   // 2. Calls Unsplash
-  // 3. Combines the data
-  // 4. Sends one response back
+  // 3. Calls NASA
+  // 4. Combines the data
+  // 5. Sends one response back
   //
   // This is much closer to how
   // professional applications work.
-
-  const serverUrl = "http://localhost:3001";
 
   // =========================
   // GET WEATHER FUNCTION
@@ -55,8 +58,11 @@ function App() {
   // It can wait for API data
   // It allows use of await
 
+  
   const getWeather = async () => {
-
+    
+    console.log("CITY:", city);
+    console.log("URL:", `${serverUrl}/weather?city=${city}`);
     // Prevent empty searches
     if (city === "") {
       setError("Please enter a city.");
@@ -126,7 +132,8 @@ function App() {
       // Weather Data
       // +
       // Image Data
-      //
+      // +
+      // NASA Data
       // Example:
       //
       // {
@@ -134,7 +141,8 @@ function App() {
       //   temperature: 72,
       //   humidity: 60,
       //   description: "broken clouds",
-      //   image: "https://..."
+      //   image: "https://...",
+      //   nasa: "image of the day"
       // }
 
       setWeather(data);
@@ -184,11 +192,15 @@ function App() {
 
       Backend
         ↓
+      Nasa API
+
+      Backend
+        ↓
       One Combined Response
 
       */}
 
-      <h1>Weather + Image API Demo</h1>
+      <h1>Weather + Image API + NASA API Demo</h1>
 
       {/* =========================
           INPUT
@@ -269,20 +281,15 @@ function App() {
           {/*
 
           NEW:
-
           The backend uses the weather
           condition to search Unsplash.
 
           Examples:
 
           Clouds → Cloud photo
-
           Rain → Rainy photo
-
           Snow → Snowy photo
-
           Sunny → Sunshine photo
-
           */}
 
           {weather.image && (
@@ -295,6 +302,33 @@ function App() {
 
           )}
 
+        {/* =========================
+            STEP 8: Add NASA Data
+          ========================== */}
+
+      {/* NEW NASA ADDITION */}
+
+        {/* {weather.nasa && (
+
+          <div style={styles.nasaCard}>
+
+            <h2>🚀 NASA Astronomy Picture of the Day</h2>
+
+            <h3>{weather.nasa.title}</h3>
+
+            <img
+              src={weather.nasa.image}
+              alt={weather.nasa.title}
+              style={styles.image}
+            />
+
+            <p>
+              {weather.nasa.explanation}
+            </p>
+
+          </div>
+
+)} */}
         </div>
 
       )}
