@@ -5,14 +5,25 @@
 body {
   margin: 0;
   padding: 0;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 
-  /* Sky gradient */
-  background: linear-gradient(to bottom, #4facfe, #c2e9fb);
+  /* Animated vibrant sky-to-sunset gradient */
+  background: linear-gradient(-45deg, #4facfe, #69f5fc, #95fecf, #da76ff);
+  background-size: 400% 400%;
+  animation: gradientBG 15s ease infinite;
 
   min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  overflow-x: hidden;
 }
 
+/* Background Animation */
+@keyframes gradientBG {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
 
 /* =========================
    MAIN CONTAINER
@@ -22,24 +33,26 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-
-  padding-top: 50px;
-
+  padding: 50px 20px;
   color: white;
+  width: 100%;
+  max-width: 600px;
 }
-
 
 /* =========================
    TITLE
 ========================= */
 
 .title {
-  font-size: 3rem;
-  margin-bottom: 30px;
-
-  text-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+  font-size: 2.8rem;
+  font-weight: 800;
+  margin-bottom: 25px;
+  text-align: center;
+  background: linear-gradient(to right, #ffffff, #e0f2fe);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0px 4px 8px rgba(0, 0, 0, 0.3));
 }
-
 
 /* =========================
    SEARCH SECTION
@@ -47,113 +60,170 @@ body {
 
 .search-box {
   display: flex;
-  gap: 10px;
-  margin-bottom: 30px;
+  gap: 12px;
+  margin-bottom: 35px;
+  width: 100%;
+  justify-content: center;
 }
-
 
 /* =========================
    INPUT
 ========================= */
 
 .input {
-  padding: 12px;
-  width: 220px;
-
-  border: none;
-  border-radius: 10px;
-
+  padding: 14px 20px;
+  width: 240px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 30px; /* Rounded pill style */
   font-size: 1rem;
-
   outline: none;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  color: white;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
+.input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Glow effect when student clicks into search box */
+.input:focus {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: #00f2fe;
+  box-shadow: 0 0 15px rgba(0, 242, 254, 0.5);
+  width: 260px; /* Slight dynamic expansion */
+}
 
 /* =========================
    BUTTON
 ========================= */
 
 .button {
-  padding: 12px 18px;
-
+  padding: 14px 24px;
   border: none;
-  border-radius: 10px;
-
-  background-color: #0077ff;
+  border-radius: 30px;
+  background: linear-gradient(135deg, #0077ff, #00f2fe);
   color: white;
-
   font-size: 1rem;
   font-weight: bold;
-
   cursor: pointer;
-
-  transition: 0.3s;
+  box-shadow: 0 4px 15px rgba(0, 119, 255, 0.4);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-
-/* Hover effect */
+/* Hover dynamic scaling and glow */
 .button:hover {
-  background-color: #005fd1;
-  transform: scale(1.05);
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 8px 25px rgba(0, 242, 254, 0.6);
 }
 
+.button:active {
+  transform: translateY(1px);
+}
 
 /* =========================
    WEATHER CARD
 ========================= */
 
 .card {
-  background: rgba(255, 255, 255, 0.2);
-
-  backdrop-filter: blur(8px);
-
-  padding: 25px;
-  border-radius: 20px;
-
-  width: 320px;
-
+  /* High-fidelity crystal glassmorphism style */
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  
+  padding: 30px;
+  border-radius: 24px;
+  width: 100%;
+  max-width: 360px;
   text-align: center;
-
-  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
+  
+  /* Entry animation when card renders */
+  animation: slideUp 0.5s ease-out forwards;
 }
 
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
 
 /* =========================
    WEATHER TEXT
 ========================= */
 
 .card h2 {
-  margin-bottom: 15px;
+  font-size: 2rem;
+  margin-top: 0;
+  margin-bottom: 10px;
+  letter-spacing: 0.5px;
 }
 
 .card p {
-  font-size: 1.1rem;
-  margin: 10px 0;
+  font-size: 1.15rem;
+  margin: 12px 0;
+  background: rgba(0, 0, 0, 0.15);
+  padding: 8px 15px;
+  border-radius: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
+/* Target Unsplash / Weather Image */
+.card img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 16px;
+  margin-top: 15px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
 
 /* =========================
    ERROR MESSAGE
 ========================= */
 
 .error {
-  color: #ffdddd;
-
-  background-color: rgba(255, 0, 0, 0.3);
-
-  padding: 10px 20px;
-
-  border-radius: 10px;
-
+  color: #fff;
+  background: linear-gradient(135deg, rgba(255, 78, 80, 0.8), rgba(255, 122, 89, 0.8));
+  backdrop-filter: blur(8px);
+  padding: 12px 25px;
+  border-radius: 30px;
   margin-bottom: 20px;
+  font-weight: 600;
+  box-shadow: 0 6px 15px rgba(255, 78, 80, 0.3);
+  animation: shake 0.4s ease-in-out;
 }
 
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  75% { transform: translateX(6px); }
+}
 
 /* =========================
    LOADING MESSAGE
 ========================= */
 
 .loading {
-  font-size: 1.2rem;
+  font-size: 1.3rem;
+  font-weight: 600;
   margin-bottom: 20px;
+  letter-spacing: 1px;
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.6; transform: scale(0.98); }
+  50% { opacity: 1; transform: scale(1.02); }
 }
