@@ -7,8 +7,14 @@ body {
   padding: 0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 
-  /* Animated vibrant sky-to-sunset gradient */
-  background: linear-gradient(-45deg, #4facfe, #69f5fc, #95fecf, #da76ff);
+  /* Darker animated gradient for improved readability */
+  background: linear-gradient(
+    -45deg,
+    #1e3c72,
+    #2a5298,
+    #136a8a,
+    #5b247a
+  );
   background-size: 400% 400%;
   animation: gradientBG 15s ease infinite;
 
@@ -51,7 +57,9 @@ body {
   background: linear-gradient(to right, #ffffff, #e0f2fe);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0px 4px 8px rgba(0, 0, 0, 0.3));
+
+  /* Stronger shadow for improved visibility */
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.6));
 }
 
 /* =========================
@@ -74,26 +82,31 @@ body {
   padding: 14px 20px;
   width: 240px;
   border: 2px solid rgba(255, 255, 255, 0.2);
-  border-radius: 30px; /* Rounded pill style */
+  border-radius: 30px;
   font-size: 1rem;
   outline: none;
-  background: rgba(255, 255, 255, 0.15);
+
+  /* Darker glass background */
+  background: rgba(0, 0, 0, 0.28);
+
   backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
   color: white;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
 .input::placeholder {
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.75);
 }
 
-/* Glow effect when student clicks into search box */
+/* Glow effect when user clicks into search box */
 .input:focus {
-  background: rgba(255, 255, 255, 0.25);
+  background: rgba(0, 0, 0, 0.42);
   border-color: #00f2fe;
-  box-shadow: 0 0 15px rgba(0, 242, 254, 0.5);
-  width: 260px; /* Slight dynamic expansion */
+  box-shadow: 0 0 18px rgba(0, 242, 254, 0.5);
+  width: 260px;
 }
 
 /* =========================
@@ -104,22 +117,112 @@ body {
   padding: 14px 24px;
   border: none;
   border-radius: 30px;
-  background: linear-gradient(135deg, #0077ff, #00f2fe);
+
+  background: linear-gradient(135deg, #0066d6, #00b8e6);
+
   color: white;
   font-size: 1rem;
   font-weight: bold;
   cursor: pointer;
-  box-shadow: 0 4px 15px rgba(0, 119, 255, 0.4);
+
+  box-shadow: 0 5px 18px rgba(0, 80, 180, 0.45);
   transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
+.save-button {
+  padding: 14px 24px;
+  border: none;
+  border-radius: 30px;
+
+  background: linear-gradient(135deg, #9900d6, #6000e6);
+
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+
+  box-shadow: 0 5px 18px rgba(0, 80, 180, 0.45);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
 /* Hover dynamic scaling and glow */
 .button:hover {
   transform: translateY(-3px) scale(1.05);
-  box-shadow: 0 8px 25px rgba(0, 242, 254, 0.6);
+  box-shadow: 0 10px 28px rgba(0, 184, 230, 0.55);
 }
 
 .button:active {
+  transform: translateY(1px);
+}
+/* Hover save button*/
+.save-button:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 10px 28px rgba(233, 127, 228, 0.55);
+}
+
+.save-button:active {
+  transform: translateY(1px);
+}
+
+/* Hover delete button*/
+.delete-button {
+  padding: 14px 24px;
+  border: none;
+  border-radius: 30px;
+
+  background: linear-gradient(135deg, #f4227a, #e6002e);
+
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+
+  box-shadow: 0 5px 18px rgba(0, 80, 180, 0.45);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Hover save button*/
+.delete-button:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 10px 28px rgba(252, 124, 150, 0.55);
+}
+
+.delete-button:active {
+  transform: translateY(1px);
+}
+
+/* =========================
+   EDIT BUTTON
+========================= */
+
+.edit-button {
+  padding: 14px 24px;
+  border: none;
+  border-radius: 30px;
+
+  /* Orange gradient */
+  background: linear-gradient(135deg, #ff9800, #ff6f00);
+
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+
+  /* Soft orange glow */
+  box-shadow: 0 5px 18px rgba(255, 140, 0, 0.45);
+
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Hover effect */
+.edit-button:hover {
+  transform: translateY(-3px) scale(1.05);
+
+  /* Brighter orange glow */
+  box-shadow: 0 10px 28px rgba(255, 183, 77, 0.65);
+}
+
+/* Click effect */
+.edit-button:active {
   transform: translateY(1px);
 }
 
@@ -128,20 +231,22 @@ body {
 ========================= */
 
 .card {
-  /* High-fidelity crystal glassmorphism style */
-  background: rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  
+  /* Darker glassmorphism for higher contrast */
+  background: rgba(15, 23, 42, 0.55);
+
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+
+  border: 1px solid rgba(255, 255, 255, 0.2);
+
   padding: 30px;
   border-radius: 24px;
   width: 100%;
   max-width: 360px;
   text-align: center;
-  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.25);
-  
-  /* Entry animation when card renders */
+
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+
   animation: slideUp 0.5s ease-out forwards;
 }
 
@@ -150,6 +255,7 @@ body {
     opacity: 0;
     transform: translateY(30px) scale(0.95);
   }
+
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -170,23 +276,31 @@ body {
 .card p {
   font-size: 1.15rem;
   margin: 12px 0;
-  background: rgba(0, 0, 0, 0.15);
+
+  /* Darker text boxes */
+  background: rgba(0, 0, 0, 0.35);
+
   padding: 8px 15px;
   border-radius: 12px;
+
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-/* Target Unsplash / Weather Image */
+/* Weather Image */
+
 .card img {
   width: 100%;
   height: 200px;
   object-fit: cover;
+
   border-radius: 16px;
   margin-top: 15px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.4);
+
+  border: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 /* =========================
@@ -194,21 +308,40 @@ body {
 ========================= */
 
 .error {
-  color: #fff;
-  background: linear-gradient(135deg, rgba(255, 78, 80, 0.8), rgba(255, 122, 89, 0.8));
+  color: white;
+
+  background: linear-gradient(
+    135deg,
+    rgba(185, 28, 28, 0.9),
+    rgba(220, 38, 38, 0.85)
+  );
+
   backdrop-filter: blur(8px);
+
   padding: 12px 25px;
   border-radius: 30px;
+
   margin-bottom: 20px;
+
   font-weight: 600;
-  box-shadow: 0 6px 15px rgba(255, 78, 80, 0.3);
+
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+
   animation: shake 0.4s ease-in-out;
 }
 
 @keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-6px); }
-  75% { transform: translateX(6px); }
+  0%, 100% {
+    transform: translateX(0);
+  }
+
+  25% {
+    transform: translateX(-6px);
+  }
+
+  75% {
+    transform: translateX(6px);
+  }
 }
 
 /* =========================
@@ -220,10 +353,20 @@ body {
   font-weight: 600;
   margin-bottom: 20px;
   letter-spacing: 1px;
+
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+
   animation: pulse 1.5s infinite ease-in-out;
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 0.6; transform: scale(0.98); }
-  50% { opacity: 1; transform: scale(1.02); }
+  0%, 100% {
+    opacity: 0.6;
+    transform: scale(0.98);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.02);
+  }
 }

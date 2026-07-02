@@ -16,25 +16,25 @@ function App() {
   // STATE VARIABLES
   // =========================
 
-  const [city, setCity] = useState(""); // user input city
-  const [weather, setWeather] = useState(null); // weather API data
-  const [loading, setLoading] = useState(false); // loading state
-  const [notes, setNotes] = useState(""); // user notes
-  const [favorites, setFavorites] = useState([]); // MongoDB favorites
-  const [error, setError] = useState(""); // error messages
+  const [city, setCity] = useState("");
+  const [weather, setWeather] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [notes, setNotes] = useState("");
+  const [favorites, setFavorites] = useState([]);
+  const [error, setError] = useState("");
 
-  // STEP 10: editing state
-  const [editingId, setEditingId] = useState(null);
-  const [updatedNotes, setUpdatedNotes] = useState("");
+  // ======================================
+  // LAB 13
+  // Editing State (PUT)
+  // Uncomment these when teaching UPDATE.
+  // ======================================
+  // const [editingId, setEditingId] = useState(null);
+  // const [updatedNotes, setUpdatedNotes] = useState("");
 
   // =========================
   // GET WEATHER FUNCTION
   // =========================
-
   const getWeather = async () => {
-    console.log("CITY:", city);
-    console.log("URL:", `${serverUrl}/weather?city=${city}`);
-
     if (city === "") {
       setError("Please enter a city.");
       return;
@@ -44,8 +44,7 @@ function App() {
     setError("");
 
     try {
-      const url = `${serverUrl}/weather?city=${city}`;
-      const response = await fetch(url);
+      const response = await fetch(`${serverUrl}/weather?city=${city}`);
       const data = await response.json();
 
       if (data.error) {
@@ -64,7 +63,6 @@ function App() {
   // =========================
   // SAVE LOCATION (POST)
   // =========================
-
   const saveLocation = async () => {
     try {
       const response = await fetch(`${serverUrl}/favorites`, {
@@ -78,13 +76,13 @@ function App() {
         }),
       });
 
-      const savedLocation = await response.json();
-      console.log(savedLocation);
+      await response.json();
 
+      getFavorites();
 
-      // clear form
       setCity("");
       setNotes("");
+
     } catch (error) {
       console.log(error);
       setError("Unable to save favorite.");
@@ -92,25 +90,33 @@ function App() {
   };
 
   // =========================
-  // DELETE FAVORITES (DELETE)
+  // DELETE LOCATION (DELETE)
   // =========================
+  /*
+    Sends a DELETE request to the backend.
+    The backend deletes one MongoDB document
+    using its unique _id.
 
+    After deleting, reload the favorites
+    so the page stays up to date.
+  */
   const deleteLocation = async (id) => {
-  try {
-    await fetch(`${serverUrl}/favorites/${id}`, {
-      method: "DELETE"
-    });
+    try {
+      await fetch(`${serverUrl}/favorites/${id}`, {
+        method: "DELETE",
+      });
 
-    getFavorites(); // refresh list
-  } catch (error) {
-    console.log(error);
-    setError("Unable to delete favorite.");
-  }
-};
+      getFavorites();
+
+    } catch (error) {
+      console.log(error);
+      setError("Unable to delete favorite.");
+    }
+  };
+
   // =========================
   // GET FAVORITES (READ)
   // =========================
-
   const getFavorites = async () => {
     try {
       const response = await fetch(`${serverUrl}/favorites`);
@@ -122,56 +128,27 @@ function App() {
     }
   };
 
+  /*
   // =========================
+  // LAB 13
   // UPDATE LOCATION (PUT)
   // =========================
 
   const updateLocation = async (id) => {
-    try {
-      const response = await fetch(`${serverUrl}/favorites/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          notes: updatedNotes,
-        }),
-      });
-
-      const updatedFavorite = await response.json();
-      console.log(updatedFavorite);
-
-      getFavorites();
-
-      setEditingId(null);
-      setUpdatedNotes("");
-    } catch (error) {
-      console.log(error);
-      setError("Unable to update favorite.");
-    }
+    ...
   };
-
-  // =========================
-  // STEP 9-A: LOAD FAVORITES ON PAGE LOAD
-  // =========================
+  */
 
   useEffect(() => {
     getFavorites();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [serverUrl]);
-
-  // =========================
-  // UI (JSX)
-  // =========================
 
   return (
     <div className="container">
-
-      {/* TITLE */}
       <h1 className="title">Weather + Image API Demo</h1>
 
-      {/* SEARCH BOX */}
       <div className="search-box">
-
         <input
           type="text"
           placeholder="Enter city"
@@ -180,7 +157,6 @@ function App() {
           className="input"
         />
 
-        {/* NOTES INPUT */}
         <input
           type="text"
           placeholder="Add a note about this city..."
@@ -189,97 +165,62 @@ function App() {
           className="input"
         />
 
-        {/* GET WEATHER */}
         <button onClick={getWeather} className="button">
           Get Weather
         </button>
 
-        {/* SAVE FAVORITE */}
-        <button onClick={saveLocation} className="button">
+        <button onClick={saveLocation} className="save-button">
           Save Favorite
         </button>
-
       </div>
 
-      {/* LOADING */}
       {loading && <h2 className="loading">Loading...</h2>}
-
-      {/* ERROR */}
       {error && <h2 className="error">{error}</h2>}
 
-      {/* WEATHER CARD */}
       {weather && (
         <div className="card">
-
           <h2>{weather.city}</h2>
-
-          <p>
-            <span>Temperature:</span>{" "}
-            <strong>{weather.temperature}°F</strong>
-          </p>
-
-          <p>
-            <span>Condition:</span>{" "}
-            <strong>{weather.description}</strong>
-          </p>
-
-          <p>
-            <span>Humidity:</span>{" "}
-            <strong>{weather.humidity}%</strong>
-          </p>
+          <p><strong>Temperature:</strong> {weather.temperature}°F</p>
+          <p><strong>Condition:</strong> {weather.description}</p>
+          <p><strong>Humidity:</strong> {weather.humidity}%</p>
 
           {weather.image && (
             <img src={weather.image} alt={weather.description} />
           )}
-
         </div>
       )}
-
-      {/* =========================
-          FAVORITES LIST (OUTSIDE WEATHER CARD)
-      ========================== */}
 
       <h2>Saved Favorite Locations</h2>
 
       {favorites.map((location) => (
         <div key={location._id} className="card">
-
           <h3>{location.city}</h3>
           <p>{location.notes}</p>
 
-          {/* EDIT BUTTON */}
+          {/* Delete removes this favorite from MongoDB */}
           <button
-            onClick={() => {
-              setEditingId(location._id);
-              setUpdatedNotes(location.notes);
-            }}
+            onClick={() => deleteLocation(location._id)}
+            className="delete-button"
           >
-            Edit
+            Delete Favorite
           </button>
 
-          {/* EDIT MODE INPUT */}
-          {editingId === location._id && (
-            <>
-              <input
-                type="text"
-                value={updatedNotes}
-                onChange={(e) => setUpdatedNotes(e.target.value)}
-              />
+          {/*
+          ==========================
+          LAB 13 - UPDATE UI
 
-              <button onClick={() => updateLocation(location._id)}>
-                Save Changes
-              </button>
-            </>
-          )}
+          <button>Edit</button>
 
+          <input ... />
+
+          <button>Save Changes</button>
+
+          ==========================
+          */}
         </div>
       ))}
-
     </div>
   );
 }
 
-// =========================
-// EXPORT
-// =========================
 export default App;
