@@ -1,8 +1,11 @@
-/* eslint-disable no-unused-vars */
-
+// src/App.jsx
 // useState + useEffect lets React store and load data
 import { useState, useEffect } from "react";
 import "./App.css";
+// STEP 9: Import the Header component
+import Header from "./components/Header.jsx";
+// STEP 10: Import useAuth0 from the Auth0 React SDK
+import { useAuth0 } from "@auth0/auth0-react";
 
 // =========================
 // MAIN COMPONENT
@@ -23,10 +26,14 @@ function App() {
   const [favorites, setFavorites] = useState([]); // MongoDB favorites
   const [error, setError] = useState(""); // error messages
 
-  // STEP 10: editing state
   const [editingId, setEditingId] = useState(null);
   const [updatedNotes, setUpdatedNotes] = useState("");
 
+  // STEP 11: Destructure the following from useAuth0
+  const {
+  getAccessTokenSilently,
+  isAuthenticated,
+  } = useAuth0();
   // =========================
   // GET WEATHER FUNCTION
   // =========================
@@ -62,15 +69,51 @@ function App() {
   };
 
   // =========================
+  // GET FAVORITES (READ)
+  // =========================
+
+  const getFavorites = async () => {
+  try {
+
+    // STEP 12: Ask Auth0 for a JWT. 
+    // This token proves who the logged-in user is.
+    const token = await getAccessTokenSilently();
+
+    const response = await fetch(`${serverUrl}/favorites`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const data = await response.json();
+    setFavorites(data);
+
+  } catch (error) {
+    console.log(error);
+    setError("Unable to load favorites.");
+  }
+};
+
+  // =========================
   // SAVE LOCATION (POST)
   // =========================
 
   const saveLocation = async () => {
     try {
+      const token = await getAccessTokenSilently();
+      //debugging--> 
+      console.log("TOKEN:", token);
+      console.log("SAVING CITY:", city);
+      console.log("SAVING NOTES:", notes);
+
       const response = await fetch(`${serverUrl}/favorites`, {
         method: "POST",
+        // STEP 12:
+        // Include BOTH the content type and the JWT.
+        // Attach the JWT to POST requests.
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           city,
@@ -92,47 +135,21 @@ function App() {
     }
   };
 
-  // =========================
-  // DELETE FAVORITES (DELETE)
-  // =========================
-
-  const deleteLocation = async (id) => {
-  try {
-    await fetch(`${serverUrl}/favorites/${id}`, {
-      method: "DELETE"
-    });
-
-    getFavorites(); // refresh list
-  } catch (error) {
-    console.log(error);
-    setError("Unable to delete favorite.");
-  }
-};
-  // =========================
-  // GET FAVORITES (READ)
-  // =========================
-
-  const getFavorites = async () => {
-    try {
-      const response = await fetch(`${serverUrl}/favorites`);
-      const data = await response.json();
-      setFavorites(data);
-    } catch (error) {
-      console.log(error);
-      setError("Unable to load favorites.");
-    }
-  };
-
-  // =========================
+    // =========================
   // UPDATE LOCATION (PUT)
   // =========================
 
   const updateLocation = async (id) => {
     try {
+      
+      const token = await getAccessTokenSilently();
+      // STEP 13:
+      // Attach the JWT to PUT requests.
       const response = await fetch(`${serverUrl}/favorites/${id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
           notes: updatedNotes,
@@ -153,22 +170,52 @@ function App() {
   };
 
   // =========================
-  // STEP 9-A: LOAD FAVORITES ON PAGE LOAD
+  // DELETE FAVORITES (DELETE)
   // =========================
 
-  useEffect(() => {
-    getFavorites();
-  }, [serverUrl]);
+  const deleteLocation = async (id) => {
+  try {
+    const token = await getAccessTokenSilently();
+    await fetch(`${serverUrl}/favorites/${id}`, {
+      method: "DELETE",
+      // STEP 14:
+      // Attach the JWT to DELETE requests.
+      headers: {
+      Authorization: `Bearer ${token}`,
+      },
+    });
 
+    getFavorites(); // refresh list
+  } catch (error) {
+    console.log(error);
+    setError("Unable to delete favorite.");
+  }
+};
+  
+
+  // =========================
+  // LOAD FAVORITES ON PAGE LOAD
+  // =========================
+
+useEffect(() => {
+  if (isAuthenticated) {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    getFavorites();
+  } else {
+    setFavorites([]);
+  }
+}, [isAuthenticated, serverUrl]);
+  //Note: We load the user's saved favorites once when the component loads (or if the server URL changes). getFavorites() fetches data from the backend and updates React state with setFavorites(). This is the standard data-fetching pattern you'll see in many React applications.
+
+  
   // =========================
   // UI (JSX)
   // =========================
-
   return (
     <div className="container">
-
-      {/* TITLE */}
-      <h1 className="title">Weather + Image API Demo</h1>
+      {/* STEP 10: Display the Header component */}
+      <Header />
+      
 
       {/* SEARCH BOX */}
       <div className="search-box">
@@ -196,9 +243,11 @@ function App() {
         </button>
 
         {/* SAVE FAVORITE */}
-        <button onClick={saveLocation} className="save-button">
-          Save Favorite
-        </button>
+        {isAuthenticated && (
+          <button onClick={saveLocation} className="save-button">
+            Save Favorite
+          </button>
+        )}
 
       </div>
 
@@ -240,55 +289,72 @@ function App() {
           FAVORITES LIST (OUTSIDE WEATHER CARD)
       ========================== */}
 
-      <h2>Saved Favorite Locations</h2>
+     {/* Only authenticated users can view and manage favorites */}
+{isAuthenticated ? (
+  <>
+    <h2>Saved Favorite Locations</h2>
 
-      {favorites.map((location) => (
-        <div key={location._id} className="card">
+    {favorites.map((location) => (
+      <div key={location._id} className="card">
 
-          <h3>{location.city}</h3>
-          <p>{location.notes}</p>
+        <h3>{location.city}</h3>
+        <p>{location.notes}</p>
 
-            {/* Delete removes this favorite from MongoDB */}
-          <button
-            onClick={() => deleteLocation(location._id)}
-            className="delete-button"
-          >
-            Delete Favorite
-          </button>
+        {/* Delete removes this favorite from MongoDB */}
+        <button
+          onClick={() => deleteLocation(location._id)}
+          className="delete-button"
+        >
+          Delete Favorite
+        </button>
 
-          {/* EDIT BUTTON */}
-          <button
-            className="edit-button"
-            onClick={() => {
-              setEditingId(location._id);
+        {/* EDIT BUTTON */}
+        <button
+          className="edit-button"
+          onClick={() => {
+            setEditingId(location._id);
 
-              // If notes is undefined or null, use an empty string instead.
-              setUpdatedNotes(location.notes ?? "");
-            }}>
-            Edit
-          </button>
+            // If notes is undefined or null, use an empty string instead.
+            setUpdatedNotes(location.notes ?? "");
+          }}
+        >
+          Edit
+        </button>
 
-          {/* EDIT MODE INPUT */}
-          {editingId === location._id && (
-            <>
-              <input
-                type="text"
-                value={updatedNotes ?? ""}
-                onChange={(e) => setUpdatedNotes(e.target.value)}
-              />
+        {/* EDIT MODE INPUT */}
+        {editingId === location._id && (
+          <>
+            <input
+              type="text"
+              value={updatedNotes ?? ""}
+              onChange={(e) => setUpdatedNotes(e.target.value)}
+            />
 
-              <button onClick={() => updateLocation(location._id)}>
-                Save Changes
-              </button>
-            </>
-          )}
+            <button
+              className="button"
+              onClick={() => updateLocation(location._id)}
+            >
+              Save Changes
+            </button>
+          </>
+        )}
 
-        </div>
-      ))}
+      </div>
+    ))}
+  </>
+) : (
+  <div className="card">
+    <h2>🔒 Favorites Locked</h2>
+    <p>
+      Log in with Auth0 to save, edit, and view your favorite cities.
+    </p>
+  </div>
+)}
 
-    </div>
+  </div>
   );
 }
+
 
 // =========================
 // EXPORT
