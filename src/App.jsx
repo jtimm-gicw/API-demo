@@ -1,5 +1,6 @@
 // src/App.jsx
 // useState + useEffect lets React store and load data
+// useEffect is a React hook that runs code when the component loads or when certain variables change. In this case, we use it to load the user's saved favorites once when the component loads (or if the server URL changes). getFavorites() fetches data from the backend and updates React state with setFavorites(). This is the standard data-fetching pattern you'll see in many React applications.
 import { useState, useEffect } from "react";
 import "./App.css";
 // STEP 9: Import the Header component
